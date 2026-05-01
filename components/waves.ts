@@ -1,0 +1,8 @@
+// Dramatic, high-amplitude waves — each shape unique
+export const WAVE_HERO         = "M0,30 C280,105 760,0 1440,60 L1440,100 L0,100 Z"
+export const WAVE_ABOUT_TOP    = "M0,0 C180,95 840,5 1440,70 L1440,100 L0,100 Z"
+export const WAVE_ABOUT_BOTTOM = "M0,75 C340,0 900,100 1440,20 L1440,100 L0,100 Z"
+export const WAVE_WHY_BOTTOM   = "M0,60 C480,0 960,95 1440,30 L1440,100 L0,100 Z"
+export const WAVE_CATS_TOP     = "M0,15 C350,100 1050,0 1440,65 L1440,100 L0,100 Z"
+export const WAVE_LEGACY       = "M0,50 C580,5 920,95 1440,35 L1440,100 L0,100 Z"
+export const WAVE_CTA          = "M0,10 C260,100 1120,0 1440,55 L1440,100 L0,100 Z"

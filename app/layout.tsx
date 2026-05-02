@@ -15,6 +15,10 @@ const instrumentSans = Instrument_Sans({
 export const metadata: Metadata = {
   title: 'Bharat Ke Anmol',
   description: 'Celebrating excellence and honoring India\'s true achievers.',
+  icons: {
+    icon: '/favicon.png',
+    apple: '/favicon.png',
+  },
 }
 
 export default function RootLayout({

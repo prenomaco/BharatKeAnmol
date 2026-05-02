@@ -1,35 +1,21 @@
 import Link from 'next/link'
 import { Globe, AtSign, Rss, Send } from 'lucide-react'
-import { WaveDivider } from './WaveDivider'
-import { WAVE_CTA } from './waves'
 
 export function Footer() {
   return (
     <footer className="relative bg-navy">
-      {/* Wave top — cream into navy */}
-      <WaveDivider
-        path={WAVE_CTA}
-        fill="#1b2845"
-        className="h-[60px] -mt-[1px]"
-      />
-
-      <div className="max-w-[1280px] mx-auto px-6 pt-4 pb-12">
-        <div
-          className="grid gap-12"
-          style={{
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-          }}
-        >
+      <div className="max-w-[1280px] mx-auto px-6 pt-14 pb-12">
+        <div className="grid gap-12 md:grid-cols-[1.6fr_0.8fr_0.8fr]">
           {/* Col 1 — Masthead */}
-          <div style={{ gridColumn: 'span 2' }}>
-            <div className="text-[36px] font-bold italic text-white leading-tight mb-3">
+          <div>
+            <div className="text-[28px] font-bold italic text-white leading-tight mb-4">
               Bharat Ke Anmol.
             </div>
             <p className="text-white/75 text-[13px] mb-4 leading-relaxed max-w-[340px]">
               A prestigious national award ceremony celebrating the real gems of India.
             </p>
             <p className="text-white/65 text-[12px] leading-relaxed max-w-[340px]">
-              We identify people whose work strengthens society and give them the stage they truly deserve. From entrepreneurs to social leaders — recognized, honored, celebrated.
+              We identify people whose work strengthens society and give them the stage they truly deserve. From entrepreneurs to social leaders: recognized, honored, celebrated.
             </p>
           </div>
 
@@ -48,7 +34,7 @@ export function Footer() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-white/80 text-[13px] hover:text-white transition-colors duration-200"
+                  className="gsap-hover !text-white text-[13px] hover:!text-white/75 transition-colors duration-200 inline-block"
                 >
                   {link.label}
                 </Link>
@@ -72,9 +58,9 @@ export function Footer() {
                   key={label}
                   href={href}
                   aria-label={label}
-                  className="text-saffron hover:text-amber transition-colors duration-200"
+                  className="gsap-hover text-saffron hover:text-amber transition-colors duration-200 inline-block"
                 >
-                  <Icon size={20} strokeWidth={1.8} />
+                  <Icon className="hover-icon" size={20} strokeWidth={1.8} />
                 </a>
               ))}
             </div>

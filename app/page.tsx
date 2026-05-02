@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { CSSProperties, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
@@ -14,10 +14,12 @@ import {
   Flame,
   Trophy,
   Check,
+  Sparkles,
+  MapPin,
 } from 'lucide-react'
-import { WaveDivider } from '@/components/WaveDivider'
 import { AnimatedSection } from '@/components/AnimatedSection'
-import { WAVE_HERO, WAVE_ABOUT_TOP, WAVE_ABOUT_BOTTOM, WAVE_WHY_BOTTOM, WAVE_CATS_TOP } from '@/components/waves'
+import { WaveDivider } from '@/components/WaveDivider'
+import { WAVE_ABOUT_BOTTOM, WAVE_WHY_BOTTOM, WAVE_CATS_TOP } from '@/components/waves'
 
 const categories = [
   { name: 'Business & Entrepreneurship', Icon: Briefcase },
@@ -38,6 +40,8 @@ const strengths = [
   'Networking with influential personalities',
   'Media and public recognition',
 ]
+
+const marqueeIcons = [Trophy, Star, Sparkles, MapPin, Briefcase, GraduationCap, Heart, Users, Zap, Palette]
 
 interface StatCounterProps {
   target: string
@@ -80,15 +84,42 @@ function StatCounter({ target, label }: StatCounterProps) {
   }, [target])
 
   return (
-    <div ref={ref} className="text-[56px] md:text-[64px] font-bold text-navy leading-none">
+    <div ref={ref} className="text-[42px] md:text-[56px] font-bold text-navy leading-none">
       {target}
+    </div>
+  )
+}
+
+function IconMarquee({ side = 'right' }: { side?: 'left' | 'right' }) {
+  return (
+    <div
+      className={`icon-marquee-shell pointer-events-none absolute left-0 right-0 z-[1] h-8 overflow-hidden opacity-60 lg:top-8 lg:bottom-8 lg:h-auto lg:w-14 lg:opacity-100 ${side === 'left' ? 'top-5 lg:left-5 lg:right-auto' : 'bottom-20 lg:left-auto lg:right-5'}`}
+      aria-hidden="true"
+    >
+      <div className={`icon-marquee-track ${side === 'left' ? 'marquee-reverse' : ''}`}>
+        {[0, 1].map((setIndex) => (
+          <div key={`${side}-set-${setIndex}`} className="icon-marquee-set">
+            {marqueeIcons.map((Icon, index) => (
+              <Icon
+                key={`${side}-${setIndex}-${index}`}
+                className="h-5 w-5 text-saffron/25 lg:h-8 lg:w-8 lg:text-saffron/30"
+                strokeWidth={1.7}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
 
 export default function HomePage() {
   const h1Ref = useRef<HTMLHeadingElement>(null)
+  const heroKickerRef = useRef<HTMLParagraphElement>(null)
+  const heroCopyRef = useRef<HTMLParagraphElement>(null)
+  const heroActionsRef = useRef<HTMLDivElement>(null)
   const photoRef = useRef<HTMLDivElement>(null)
+  const statsRef = useRef<HTMLDivElement>(null)
   const whyLeftRef = useRef<HTMLDivElement>(null)
   const whyRightRef = useRef<HTMLDivElement>(null)
   const founderPhotoRef = useRef<HTMLDivElement>(null)
@@ -101,26 +132,58 @@ export default function HomePage() {
       import('gsap/ScrollTrigger').then(({ ScrollTrigger }) => {
         gsap.registerPlugin(ScrollTrigger)
 
-        // Hero H1 clip-path reveal
-        if (h1Ref.current) {
-          gsap.from(h1Ref.current, {
-            clipPath: 'inset(0 100% 0 0)',
-            duration: 0.9,
-            ease: 'power3.out',
-            delay: 0.1,
-          })
-        }
+        gsap.from(
+          [heroKickerRef.current, h1Ref.current, heroCopyRef.current, heroActionsRef.current].filter(Boolean),
+          {
+            y: 28,
+            opacity: 0,
+            duration: 0.85,
+            stagger: 0.09,
+            ease: 'power4.out',
+            clearProps: 'transform,opacity',
+          }
+        )
 
         // Hero photo
         if (photoRef.current) {
           gsap.from(photoRef.current, {
-            scale: 0.94,
+            y: 34,
+            scale: 0.96,
             opacity: 0,
-            duration: 0.8,
-            delay: 0.4,
-            ease: 'power2.out',
+            rotate: -2,
+            duration: 1,
+            delay: 0.18,
+            ease: 'power4.out',
+            clearProps: 'transform,opacity',
           })
         }
+
+        if (statsRef.current) {
+          gsap.from(statsRef.current.querySelectorAll('.stat-item'), {
+            y: 22,
+            opacity: 0,
+            duration: 0.75,
+            stagger: 0.1,
+            delay: 0.34,
+            ease: 'power4.out',
+            clearProps: 'transform,opacity',
+          })
+        }
+
+        const hoverTargets = document.querySelectorAll<HTMLElement>('.gsap-hover')
+        hoverTargets.forEach((target) => {
+          const icon = target.querySelector<HTMLElement>('.hover-icon')
+          const onEnter = () => {
+            gsap.to(target, { y: -3, scale: 1.015, duration: 0.24, ease: 'power3.out' })
+            if (icon) gsap.to(icon, { y: -2, rotate: 7, duration: 0.24, ease: 'power3.out' })
+          }
+          const onLeave = () => {
+            gsap.to(target, { y: 0, scale: 1, duration: 0.28, ease: 'power3.out' })
+            if (icon) gsap.to(icon, { y: 0, rotate: 0, duration: 0.28, ease: 'power3.out' })
+          }
+          target.addEventListener('mouseenter', onEnter)
+          target.addEventListener('mouseleave', onLeave)
+        })
 
         // Why BKA panels
         if (whyLeftRef.current) {
@@ -191,19 +254,18 @@ export default function HomePage() {
     <main className="bg-cream overflow-x-hidden">
 
       {/* ========== HERO ========== */}
-      <section className="relative grain bg-cream min-h-[88vh] flex flex-col justify-center pt-10 pb-0">
+      <section className="relative grain bg-cream min-h-[72vh] flex flex-col justify-center pt-3 pb-3">
         {/* Saffron radial glow */}
         <div
           className="absolute inset-0 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse at top left, rgba(217,119,6,0.12), transparent 60%)' }}
+          style={{ background: 'radial-gradient(ellipse at bottom right, rgba(217,119,6,0.10), transparent 58%)' }}
         />
-
         <div className="relative z-10 max-w-[1280px] mx-auto px-6 w-full">
           <div className="grid md:grid-cols-[60%_40%] gap-10 items-center">
 
             {/* Left */}
-            <div className="py-12 md:py-20">
-              <p className="text-saffron text-[11px] font-bold uppercase tracking-[0.18em] mb-5">
+            <div className="py-7 md:py-11">
+              <p ref={heroKickerRef} className="text-saffron text-[11px] font-bold uppercase tracking-[0.18em] mb-5">
                 CELEBRATING EXCELLENCE · HONORING TRUE HEROES
               </p>
               <h1
@@ -211,33 +273,31 @@ export default function HomePage() {
                 className="text-navy font-bold leading-[0.92] mb-6"
                 style={{
                   fontSize: 'clamp(64px, 7vw, 100px)',
-                  clipPath: 'inset(0 0% 0 0)',
                 }}
               >
                 Bharat Ke Anmol
               </h1>
-              <div className="w-16 h-[3px] bg-gold mb-6" />
-              <p className="text-muted text-[18px] leading-[1.7] max-w-[520px] mb-8">
+              <p ref={heroCopyRef} className="text-muted text-[18px] leading-[1.7] max-w-[560px] mb-8">
                 A prestigious national award platform recognizing individuals who are making a real difference in society. From entrepreneurs to social leaders, from innovators to change-makers, we honor those who truly deserve to be called Bharat Ke Anmol.
               </p>
-              <div className="flex flex-wrap items-center gap-4">
+              <div ref={heroActionsRef} className="flex flex-wrap items-center gap-4">
                 <Link
                   href="/nominate"
-                  className="bg-saffron text-white font-bold px-7 py-3.5 rounded-full hover:bg-amber transition-colors duration-200 text-[15px]"
+                  className="gsap-hover bg-saffron text-white font-bold px-7 py-3.5 rounded-full hover:bg-amber transition-colors duration-200 text-[15px]"
                 >
                   Nominate Now
                 </Link>
                 <Link
                   href="/partner"
-                  className="text-navy font-semibold text-[15px] hover:text-saffron transition-colors duration-200 flex items-center gap-1.5"
+                  className="gsap-hover text-navy font-semibold text-[15px] hover:text-saffron transition-colors duration-200 flex items-center gap-1.5"
                 >
-                  Become a Partner <span className="text-saffron">→</span>
+                  Become a Partner <span className="hover-icon text-saffron">→</span>
                 </Link>
               </div>
             </div>
 
             {/* Right — Logo with ambient glow */}
-            <div ref={photoRef} className="relative flex flex-col items-center justify-center py-12 md:py-20">
+            <div ref={photoRef} className="relative flex flex-col items-center justify-center py-5 md:py-9">
               {/* Saffron/amber glow blob */}
               <div
                 className="absolute rounded-full pointer-events-none"
@@ -268,49 +328,47 @@ export default function HomePage() {
                 <Image
                   src="/media/BharatKeAnmolLogo.png"
                   alt="Bharat Ke Anmol"
-                  width={300}
-                  height={300}
+                  width={260}
+                  height={526}
                   priority
-                  className="object-contain w-[220px] h-[220px] md:w-[300px] md:h-[300px]"
+                  className="object-contain h-[170px] w-auto md:h-[210px]"
                 />
-                <p className="text-muted text-[13px] italic text-center">
-                  A national award ceremony
-                </p>
               </div>
-            </div>
-          </div>
-
-          {/* Stats row — NO boxes, pure type */}
-          <div className="flex flex-wrap items-center gap-0 pb-10 mt-6 md:mt-0">
-            <div className="pr-10">
-              <StatCounter target="100" label="Honorees" />
-              <p className="text-[12px] text-muted uppercase tracking-[0.1em] mt-1">Honorees</p>
-            </div>
-            <div className="w-px h-12 bg-gold/30 mr-10 hidden sm:block" />
-            <div className="pr-10">
-              <div className="text-[56px] md:text-[64px] font-bold text-navy leading-none">
-                All India
-              </div>
-              <p className="text-[12px] text-muted uppercase tracking-[0.1em] mt-1">Reach</p>
-            </div>
-            <div className="w-px h-12 bg-gold/30 mr-10 hidden sm:block" />
-            <div>
-              <div className="text-[56px] md:text-[64px] font-bold text-navy leading-none">
-                Trusted
-              </div>
-              <p className="text-[12px] text-muted uppercase tracking-[0.1em] mt-1">Recognition</p>
             </div>
           </div>
         </div>
 
-        <WaveDivider path={WAVE_HERO} fill="#1b2845" className="h-[95px] mt-4" />
+        <div className="relative z-10 bg-[#f5ede0] border-y border-gold/20 mt-0">
+          <div
+            ref={statsRef}
+            className="max-w-[1040px] mx-auto px-6 py-8 md:py-10 grid grid-cols-1 sm:grid-cols-3 gap-7 text-center"
+          >
+            <div className="stat-item">
+              <StatCounter target="100" label="Honorees" />
+              <p className="text-[12px] text-muted uppercase tracking-[0.1em] mt-2">Honorees</p>
+            </div>
+            <div className="stat-item sm:border-x sm:border-gold/25 sm:px-7">
+              <div className="text-[42px] md:text-[56px] font-bold text-navy leading-none">
+                All India
+              </div>
+              <p className="text-[12px] text-muted uppercase tracking-[0.1em] mt-2">Reach</p>
+            </div>
+            <div className="stat-item">
+              <div className="text-[42px] md:text-[56px] font-bold text-navy leading-none">
+                Trusted
+              </div>
+              <p className="text-[12px] text-muted uppercase tracking-[0.1em] mt-2">Recognition</p>
+            </div>
+          </div>
+        </div>
+
       </section>
 
       {/* ========== ABOUT BAND ========== */}
-      <section className="relative bg-navy" id="about">
-        <WaveDivider path={WAVE_ABOUT_TOP} fill="#fffaf0" className="h-[95px] rotate-180 -mt-[2px]" />
-
-        <AnimatedSection className="max-w-[900px] mx-auto px-6 py-20">
+      <section className="relative overflow-hidden bg-navy" id="about">
+        <IconMarquee side="left" />
+        <IconMarquee side="right" />
+        <AnimatedSection className="relative z-10 max-w-[900px] mx-auto px-10 py-24 lg:px-6">
           <p className="text-saffron text-[11px] font-bold uppercase tracking-[0.16em] mb-4">
             About Bharat Ke Anmol
           </p>
@@ -327,21 +385,21 @@ export default function HomePage() {
           </div>
         </AnimatedSection>
 
-        <WaveDivider path={WAVE_ABOUT_BOTTOM} fill="#f5ede0" className="h-[70px]" />
+        <WaveDivider path={WAVE_ABOUT_BOTTOM} fill="#f5ede0" className="wave-full h-20 -mb-px" />
       </section>
 
       {/* ========== WHY BKA + MISSION ========== */}
-      <section className="relative overflow-hidden bg-[#f5ede0] py-24 px-6" id="why">
+      <section className="relative overflow-hidden bg-[#f5ede0] px-6 pt-24 pb-0" id="why">
         {/* Ambient amber blob top-right */}
         <div className="absolute top-0 right-0 w-[400px] h-[400px] rounded-full pointer-events-none"
           style={{ background: 'radial-gradient(circle, rgba(245,158,11,0.12), transparent 70%)', filter: 'blur(60px)' }} />
-        <div className="max-w-[1280px] mx-auto">
-          <div className="grid gap-0 items-stretch" style={{ gridTemplateColumns: 'minmax(0,3fr) 1px minmax(0,2fr)' }}>
+        <div className="relative z-10 max-w-[1280px] mx-auto">
+          <div className="grid gap-8 items-stretch md:grid-cols-[minmax(0,3fr)_1px_minmax(0,2fr)] md:gap-0">
 
             {/* Left — Why BKA */}
             <div
               ref={whyLeftRef}
-              className="bg-white border-l-4 border-saffron rounded-2xl p-10 mr-0 md:mr-10"
+              className="gsap-hover bg-white border border-saffron/35 rounded-2xl p-10 mr-0 md:mr-10 shadow-[0_18px_45px_rgba(27,40,69,0.08)]"
             >
               <p className="text-saffron text-[11px] font-bold uppercase tracking-[0.16em] mb-4">
                 Why Bharat Ke Anmol
@@ -352,7 +410,7 @@ export default function HomePage() {
               <ul className="flex flex-col gap-4">
                 {strengths.map((item) => (
                   <li key={item} className="flex items-start gap-3">
-                    <Check size={17} className="text-saffron shrink-0 mt-0.5" strokeWidth={2.5} />
+                    <Check size={17} className="hover-icon text-saffron shrink-0 mt-0.5" strokeWidth={2.5} />
                     <span className="text-navy/80 text-[15px] leading-snug">{item}</span>
                   </li>
                 ))}
@@ -373,15 +431,15 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-        <WaveDivider path={WAVE_WHY_BOTTOM} fill="#ffffff" className="h-[80px] -mt-[1px]" />
+        <WaveDivider path={WAVE_WHY_BOTTOM} fill="#ffffff" className="wave-full h-20 mt-16 -mb-px" />
       </section>
 
       {/* ========== FOUNDER ========== */}
-      <section className="relative overflow-hidden bg-white py-24 px-6" id="founder">
+      <section className="relative overflow-hidden bg-white px-6 pt-24 pb-14" id="founder">
         {/* Ambient saffron blob bottom-left */}
         <div className="absolute bottom-0 left-0 w-[350px] h-[350px] rounded-full pointer-events-none"
           style={{ background: 'radial-gradient(circle, rgba(217,119,6,0.09), transparent 70%)', filter: 'blur(50px)' }} />
-        <div className="max-w-[1280px] mx-auto">
+        <div className="relative z-10 max-w-[1280px] mx-auto">
           <div className="grid md:grid-cols-2 gap-16 items-center">
 
             {/* Left — Copy */}
@@ -404,7 +462,7 @@ export default function HomePage() {
                   {['Visionary Leader', 'Social Reformer', 'National Award Platform'].map((chip) => (
                     <span
                       key={chip}
-                      className="text-[11px] font-semibold text-navy border border-saffron/60 px-3 py-1.5 rounded-full"
+                      className="gsap-hover text-[11px] font-semibold text-navy border border-saffron/60 px-3 py-1.5 rounded-full inline-block"
                     >
                       {chip}
                     </span>
@@ -415,8 +473,16 @@ export default function HomePage() {
 
             {/* Right — Photo, organic, no box */}
             <div ref={founderPhotoRef} className="relative">
+              <Image
+                src="/mandala/mandala_2.png"
+                alt=""
+                width={560}
+                height={560}
+                className="pointer-events-none absolute -right-16 -top-16 h-[360px] w-[360px] opacity-[0.07]"
+                aria-hidden="true"
+              />
               <div
-                className="relative w-full h-[520px]"
+                className="relative z-10 w-full h-[470px]"
                 style={{
                   boxShadow: '0 20px 60px rgba(27,40,69,0.14), 0 4px 16px rgba(27,40,69,0.08)',
                   borderRadius: '12px',
@@ -437,10 +503,12 @@ export default function HomePage() {
 
       {/* ========== AWARD CATEGORIES ========== */}
       <section className="relative overflow-hidden bg-cream py-24 px-6" id="categories">
+        <IconMarquee side="left" />
+        <IconMarquee side="right" />
         {/* Ambient navy blob top-right */}
         <div className="absolute top-10 right-0 w-[300px] h-[300px] rounded-full pointer-events-none"
           style={{ background: 'radial-gradient(circle, rgba(27,40,69,0.07), transparent 70%)', filter: 'blur(50px)' }} />
-        <div className="max-w-[1280px] mx-auto">
+        <div className="relative z-10 max-w-[1280px] mx-auto">
           <AnimatedSection className="mb-12">
             <p className="text-saffron text-[11px] font-bold uppercase tracking-[0.16em] mb-3">
               Award Categories
@@ -453,8 +521,7 @@ export default function HomePage() {
           {/* Asymmetric category grid */}
           <div
             ref={categoryCardsRef}
-            className="grid gap-3"
-            style={{ gridTemplateColumns: 'repeat(14, 1fr)' }}
+            className="award-grid grid gap-3"
           >
             {categories.map(({ name, Icon }, i) => {
               // Asymmetric spans: row1=[5,5,4], row2=[4,5,5], row3=[5,5,4]
@@ -463,27 +530,23 @@ export default function HomePage() {
               return (
                 <article
                   key={name}
-                  className="cat-card bg-off-white border border-gold/20 rounded-2xl p-5 cursor-default group hover:-translate-y-1 hover:border-saffron transition-[transform,border-color] duration-200"
+                  className="gsap-hover cat-card bg-off-white border border-gold/20 rounded-2xl p-5 cursor-default group hover:border-saffron hover:shadow-[0_14px_30px_rgba(27,40,69,0.08)] transition-[border-color,box-shadow] duration-200"
                   style={{
-                    gridColumn: `span ${span}`,
-                  }}
+                    '--span': span,
+                  } as CSSProperties}
                 >
-                  <Icon size={20} className="text-saffron mb-3" strokeWidth={1.8} />
+                  <Icon size={20} className="hover-icon text-saffron mb-3" strokeWidth={1.8} />
                   <p className="text-navy font-bold text-[13px] leading-snug">{name}</p>
                 </article>
               )
             })}
           </div>
         </div>
-        <WaveDivider path={WAVE_CATS_TOP} fill="#f5ede0" className="h-[80px] mt-8" />
       </section>
 
       {/* ========== LEGACY / UPCOMING ========== */}
-      <section className="py-24 px-6 bg-off-white" id="legacy">
+      <section className="px-6 pt-24 pb-0 bg-off-white" id="legacy">
         <div className="max-w-[1280px] mx-auto">
-          {/* Thin saffron rule */}
-          <div className="w-full h-[1px] bg-saffron/20 mb-16" />
-
           <div className="grid md:grid-cols-2 gap-8 items-start">
 
             {/* Legacy panel — navy */}
@@ -519,24 +582,14 @@ export default function HomePage() {
             </AnimatedSection>
           </div>
         </div>
+        <WaveDivider path={WAVE_CATS_TOP} fill="#d97706" className="wave-full h-20 mt-16 -mb-px" />
       </section>
 
       {/* ========== CTA BAND ========== */}
       <section
-        className="relative grain py-28 px-6 overflow-hidden text-center"
-        style={{ background: 'linear-gradient(135deg, #d97706, #f59e0b)' }}
+        className="relative py-28 px-6 overflow-hidden text-center bg-saffron"
         id="forms"
       >
-        {/* Dot grid pattern */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px)',
-            backgroundSize: '28px 28px',
-            opacity: 0.08,
-          }}
-        />
-
         <div className="relative z-10 max-w-[700px] mx-auto">
           <p className="text-white/80 text-[11px] font-bold uppercase tracking-[0.18em] mb-5">
             Are you the next Bharat Ke Anmol?

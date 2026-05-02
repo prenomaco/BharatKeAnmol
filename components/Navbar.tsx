@@ -43,35 +43,31 @@ export function Navbar() {
             : 'border-b border-transparent'
         )}
       >
-        <div className="max-w-[1280px] mx-auto px-6 h-[72px] flex items-center justify-between gap-6">
+        <div className="relative max-w-[1280px] mx-auto px-6 h-[72px] flex items-center justify-between gap-6">
           {/* Brand */}
-          <Link href="/" className="flex items-center gap-3 shrink-0">
+          <Link
+            href="/"
+            className="flex h-12 w-[82px] items-center justify-start py-2 shrink-0 transition-transform duration-300 hover:scale-[1.04]"
+            aria-label="Bharat Ke Anmol home"
+          >
             <Image
-              src="/media/BharatKeAnmolLogo.png"
+              src="/logo-text.png"
               alt="Bharat Ke Anmol"
-              width={60}
-              height={60}
-              className="object-contain"
+              width={88}
+              height={54}
+              className="h-7 w-auto object-contain"
               priority
             />
-            <div>
-              <div className="font-bold text-navy text-[15px] leading-tight tracking-tight">
-                Bharat Ke Anmol
-              </div>
-              <div className="text-[11px] text-muted italic leading-tight">
-                A national award ceremony
-              </div>
-            </div>
           </Link>
 
           {/* Center Nav — Desktop */}
-          <nav className="hidden md:flex items-center gap-7">
+          <nav className="hidden lg:flex items-center gap-7 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  'relative text-[13px] font-medium tracking-[0.04em] text-navy/80 pb-[3px] group',
+                  'gsap-hover relative text-[13px] font-medium tracking-[0.04em] text-navy/80 pb-[3px] group',
                   'transition-colors duration-200 hover:text-navy'
                 )}
               >
@@ -88,17 +84,17 @@ export function Navbar() {
           </nav>
 
           {/* Right Actions — Desktop */}
-          <div className="hidden md:flex items-center gap-5 shrink-0">
+          <div className="hidden lg:flex items-center gap-5 shrink-0">
             <Link
               href="/partner"
-              className="text-[13px] font-semibold text-navy border border-navy/25 px-4 py-2 rounded-full hover:border-saffron hover:text-saffron transition-colors duration-200 flex items-center gap-1.5"
+              className="gsap-hover text-[13px] font-semibold text-navy border border-navy/25 px-4 py-2 rounded-full hover:border-saffron hover:text-saffron transition-colors duration-200 flex items-center gap-1.5"
             >
               Become a Partner
-              <ArrowRight size={12} strokeWidth={2} />
+              <ArrowRight className="hover-icon" size={12} strokeWidth={2} />
             </Link>
             <Link
               href="/nominate"
-              className="bg-saffron text-white text-[13px] font-bold px-5 py-2.5 rounded-full hover:bg-amber transition-colors duration-200"
+              className="gsap-hover bg-saffron text-white text-[13px] font-bold px-5 py-2.5 rounded-full hover:bg-amber transition-colors duration-200"
             >
               Nominate Now
             </Link>
@@ -106,7 +102,7 @@ export function Navbar() {
 
           {/* Hamburger — Mobile */}
           <button
-            className="md:hidden text-navy p-1.5 rounded-lg hover:bg-navy/5 transition-colors duration-200"
+            className="lg:hidden text-navy p-1.5 rounded-lg hover:bg-navy/5 transition-colors duration-200"
             onClick={() => setOpen(!open)}
             aria-label="Toggle menu"
           >
@@ -117,7 +113,7 @@ export function Navbar() {
         {/* Mobile Drawer */}
         <div
           className={cn(
-            'md:hidden overflow-hidden transition-[max-height] duration-300 ease-in-out',
+            'lg:hidden overflow-hidden transition-[max-height] duration-300 ease-in-out',
             open ? 'max-h-[500px]' : 'max-h-0'
           )}
         >

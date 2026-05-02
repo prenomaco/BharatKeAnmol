@@ -46,6 +46,130 @@ img {
   height: auto;
 }
 
+.wave-full {
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+}
+
+.icon-marquee-shell {
+  mask-image: linear-gradient(to right, transparent 0%, black 14%, black 86%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 14%, black 86%, transparent 100%);
+}
+
+.icon-marquee-track {
+  display: flex;
+  width: max-content;
+  flex-wrap: nowrap;
+  animation: icon-marquee-x 22s linear infinite;
+  will-change: transform;
+}
+
+.icon-marquee-track.marquee-reverse {
+  animation-name: icon-marquee-x-reverse;
+}
+
+.icon-marquee-set {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 1.35rem;
+  padding-right: 1.35rem;
+}
+
+@keyframes icon-marquee-x {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes icon-marquee-x-reverse {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes icon-marquee-y {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+@keyframes icon-marquee-y-reverse {
+  from {
+    transform: translateY(-50%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 1024px) {
+  .icon-marquee-shell {
+    mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 86%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 86%, transparent 100%);
+  }
+
+  .icon-marquee-track {
+    display: block;
+    width: auto;
+    animation-name: icon-marquee-y;
+  }
+
+  .icon-marquee-track.marquee-reverse {
+    animation-name: icon-marquee-y-reverse;
+  }
+
+  .icon-marquee-set {
+    flex-direction: column;
+    gap: 2rem;
+    padding-right: 0;
+    padding-bottom: 2rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .icon-marquee-track {
+    animation: none;
+  }
+}
+
+.award-grid {
+  grid-template-columns: 1fr;
+}
+
+.cat-card {
+  grid-column: span 1;
+}
+
+@media (min-width: 640px) {
+  .award-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .award-grid {
+    grid-template-columns: repeat(14, minmax(0, 1fr));
+  }
+
+  .cat-card {
+    grid-column: span var(--span);
+  }
+}
+
 /* Grain texture utility */
 .grain::after {
   content: '';
